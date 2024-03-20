@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from Manager.models import Busoperator,Category,Buses,Offer,Review,Reservation,Payment
+from Manager.models import Busoperator,Category,Buses,Offer,Review,Reservation,Payment,users
 
 class OperatorSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
@@ -44,6 +44,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         model=Review
         fields="__all__"
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=users
+        fields=["name","profile_picture","date_of_birth","address"]
+
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,6 +56,8 @@ class PaymentSerializer(serializers.ModelSerializer):
         fields="__all__"
 
 class ReservationSerializer(serializers.ModelSerializer):
+    bus=BusSerializer()
+    user=UserSerializer()
     class Meta:
         model=Reservation
         fields="__all__"

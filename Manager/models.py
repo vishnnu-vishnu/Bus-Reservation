@@ -14,9 +14,17 @@ class CustomUser(AbstractUser):
     user_type_choices=[
         ('users', 'users'),
         ('Busoperator' ,'Busoperator'),
+        ('SuperAdmin' ,'SuperAdmin'),
     ]
     user_type=models.CharField(max_length=50,choices=user_type_choices,default='user')
     phone=models.CharField(max_length=10)
+
+class SuperAdmin(CustomUser):
+    name=models.CharField(max_length=50)
+    email_address = models.EmailField(null=True, blank=True)
+    phone_number = models.IntegerField( null=True)
+    def _str_(self):
+        return self.name 
 
 
 class Busoperator(CustomUser):
@@ -33,13 +41,11 @@ class Busoperator(CustomUser):
 
 class users(CustomUser):
     name=models.CharField(max_length=50)
-    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_birth = models.CharField(null=True,max_length=100)
     profile_picture = models.ImageField(upload_to='images', null=True)
-    bio = models.TextField(blank=True)
     address = models.CharField(max_length=255, blank=True)
 
-    def __str__(self):
-        return self.name
+   
     
 # __________________________________________________________________________________________
 class Category(models.Model):

@@ -8,7 +8,7 @@ from rest_framework import permissions,status
 from Manager.models import Category,Busoperator,Buses,Reservation,users,Payment
 
 
-from Userapp.serializers import UserSerializer,CategorySerializer,OperatorSerializer,BusSerializer,ReviewSerializer,ReservationSerializer,PaymentSerializer
+from Userapp.serializers import UserSerializer,CategorySerializer,OperatorSerializer,BusSerializer,ReviewSerializer,ReservationSerializer,PaymentSerializer,ReservationViewSerializer
 
 
 # Create your views here.
@@ -97,12 +97,12 @@ class UserBuses(ViewSet):
     permission_classes=[permissions.IsAuthenticated]
     
     
-    def list(self,request,*args,**kwargs):
-        user_id=request.user.id
-        user_obj=users.objects.get(id=user_id)
-        qs=Reservation.objects.get(user=user_obj)
-        serializer=ReservationSerializer(qs)
-        return Response(data=serializer.data)
+    def list(self, request, *args, **kwargs):
+        user_id = request.user.id
+        user_obj = users.objects.get(id=user_id)
+        reservations = Reservation.objects.filter(user=user_obj)
+        serializer = ReservationViewSerializer(reservations, many=True)
+        return Response(serializer.data)
     
     @action(methods=["post"],detail=True)
     def payment(self,request,*args,**kwargs):

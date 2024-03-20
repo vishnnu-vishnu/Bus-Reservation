@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=users
-        fields=["id","name","phone","username","date_of_birth","profile_picture","bio","address","password"]
+        fields=["id","name","phone","username","date_of_birth","profile_picture","address","password"]
 
     def create(self, validated_data):
         return users.objects.create_user(**validated_data)
@@ -39,6 +39,14 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class ReservationSerializer(serializers.ModelSerializer):
     bus=serializers.CharField(read_only=True)
+    user=serializers.CharField(read_only=True)
+    reservation_status=serializers.CharField(read_only=True)
+    class Meta:
+        model=Reservation
+        fields="__all__"
+
+class ReservationViewSerializer(serializers.ModelSerializer):
+    bus=BusSerializer()
     user=serializers.CharField(read_only=True)
     reservation_status=serializers.CharField(read_only=True)
     class Meta:
