@@ -17,5 +17,7 @@ router.register("reservation",views.ReservationView,basename="reservation_list")
 urlpatterns = [
     path("register/",views.AdminCreationView.as_view(),name="signup"),
     path("token/",ObtainAuthToken.as_view(),name="token"),
+    path("profile/",views.ProfileEdit.as_view(),name="profile"),
+
    
 ]+router.urls

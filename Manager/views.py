@@ -4,8 +4,8 @@ from rest_framework import authentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions,status
-from Manager.serializers import SuperAdminSerializer,OperatorSerializer,UserSerializer,BusSerializer,ReservationSerializer
-from Manager.models import Category,Busoperator,Buses,Reservation,users,Payment
+from Manager.serializers import SuperAdminSerializer,OperatorSerializer,UserSerializer,BusSerializer,ReservationSerializer,profileSerializer
+from Manager.models import Category,Busoperator,Buses,Reservation,users,Payment,SuperAdmin
 
 
 class AdminCreationView(APIView):
@@ -109,3 +109,23 @@ class ReservationView(ViewSet):
         qs=Reservation.objects.get(id=id)
         serializer=ReservationSerializer(qs)
         return Response(data=serializer.data)
+    
+class ProfileEdit(APIView):
+    authentication_classes=[authentication.TokenAuthentication]
+    permission_classes=[permissions.IsAuthenticated]
+    
+    
+    def get(self,request,*args,**kwargs):
+        user_id=request.user.id
+        qs=SuperAdmin.objects.get(id=user_id)
+        serializer=SuperAdminSerializer(qs)
+        return Response(data=serializer.data)
+    
+    def put(self, request, *args, **kwargs):
+        user_id = request.user.id
+        user_instance = SuperAdmin.objects.get(id=user_id)
+        serializer = profileSerializer(user_instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

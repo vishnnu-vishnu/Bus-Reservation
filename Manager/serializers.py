@@ -38,3 +38,10 @@ class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model=Reservation
         fields="_all_"
+        
+
+class profileSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(read_only=True)
+    class Meta:
+        model = users
+        fields=["id","name","username","email_address","phone_number"]

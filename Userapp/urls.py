@@ -19,6 +19,8 @@ router.register("UserBuses",views.UserBuses,basename="UserBuses")
 urlpatterns = [
     path("register/",views.UserCreationView.as_view(),name="signup"),
     path("token/",ObtainAuthToken.as_view(),name="token"),
+    path("profile/",views.ProfileEdit.as_view(),name="profile"),
+    path('buses/search/', views.BusesViewSet.as_view({'post': 'search'}), name='buses-search')
 
 
 ] +router.urls

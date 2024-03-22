@@ -61,3 +61,10 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model=Payment
         fields="__all__"
+        
+        
+class profileSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(read_only=True)
+    class Meta:
+        model = users
+        fields=["id","name","phone","username","date_of_birth","profile_picture","address"]

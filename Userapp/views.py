@@ -5,10 +5,12 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework import authentication
 from rest_framework import permissions,status
+from rest_framework import viewsets
+
 from Manager.models import Category,Busoperator,Buses,Reservation,users,Payment
 
 
-from Userapp.serializers import UserSerializer,CategorySerializer,OperatorSerializer,BusSerializer,ReviewSerializer,ReservationSerializer,PaymentSerializer,ReservationViewSerializer
+from Userapp.serializers import UserSerializer,CategorySerializer,OperatorSerializer,BusSerializer,ReviewSerializer,ReservationSerializer,PaymentSerializer,ReservationViewSerializer,profileSerializer
 
 
 # Create your views here.
@@ -120,25 +122,51 @@ class UserBuses(ViewSet):
             return Response(data=serializer.errors)
         
 
-# class ProfileEdit(APIView):
-#     authentication_classes=[authentication.TokenAuthentication]
-#     permission_classes=[permissions.IsAuthenticated]
+class ProfileEdit(APIView):
+    authentication_classes=[authentication.TokenAuthentication]
+    permission_classes=[permissions.IsAuthenticated]
     
     
-#     def get(self,request,*args,**kwargs):
-#         user_id=request.user.id
-#         qs=users.objects.get(id=user_id)
-#         serializer=UserSerializer(qs)
-#         return Response(data=serializer.data)
+    def get(self,request,*args,**kwargs):
+        user_id=request.user.id
+        qs=users.objects.get(id=user_id)
+        serializer=UserSerializer(qs)
+        return Response(data=serializer.data)
     
-#     def put(self, request, *args, **kwargs):
-#         user = request.user
-#         serializer = UserSerializer(user, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, *args, **kwargs):
+        user_id = request.user.id
+        user_instance = users.objects.get(id=user_id)
+        serializer = profileSerializer(user_instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    
+    
+    
+from rest_framework import filters
+from datetime import datetime
+
+
+    
+from django.db.models import Q
+
+class BusesViewSet(viewsets.ModelViewSet):
+    queryset = Buses.objects.all()
+    serializer_class = BusSerializer
+    
+    @action(methods=['post'], detail=False)
+    def search(self, request):
+        location = request.data.get('location', None)
+        if location:
+            queryset = Buses.objects.filter(
+                Q(boarding_point__icontains=location) | Q(dropping_point__icontains=location)
+            )
+            serializer = BusSerializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({'error': 'Location parameter is required'})
     
 
 
